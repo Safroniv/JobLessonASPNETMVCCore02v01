@@ -1,13 +1,47 @@
-﻿
+﻿public class FieldForFarmers
+{
+    private char[,] _field;
+    public char[,] Field
+    {
+        get { return _field; }
+        set { _field = value; }
+    }
+    public int HeightField { get; set; }
+    public int LenghtField { get; set; }
+
     public FieldForFarmers(int heightField, int lenghtField)
     {
         Field = new char[heightField, lenghtField];
         HeightField = heightField;
         LenghtField = lenghtField;
 
+        for (int i = 0; i < heightField; i++)
+        {
+            for (int j = 0; j < lenghtField; j++)
+            {
+                Field[i, j] = '.';
+            }
+        }
+    }
 
+}
+
+public class ThreadFieldControl
+{
+    public FieldForFarmers Field { get; }
+
+    public AutoResetEvent WaitHandle { get; }
+
+    public ThreadFieldControl(FieldForFarmers field, AutoResetEvent waitHandle)
+    {
+        Field = field;
+        WaitHandle = waitHandle;
+    }
+
+}
 internal class Program
 {
+
     private static void Main(string[] args)
     {
 
@@ -110,6 +144,12 @@ internal class Program
                         if (threadFieldControl.Field.Field[i, j] == '.')
                             threadFieldControl.Field.Field[i, j] = 'O';
 
+                        Thread.Sleep(10);
+                    }
+                }
+            }
+            threadFieldControl.WaitHandle.Set();
+        }
     }
 
 }
